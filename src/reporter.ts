@@ -22,6 +22,7 @@ interface WDIOBase {
 
 interface WDIOResultBase extends WDIOBase {
     title: string
+    parent: string
     pending: boolean
     file: string
 }
@@ -108,26 +109,25 @@ class TapReporter extends EventEmitter {
 
         const parents: string[] = []
         const path: string[] = [test.title]
-        let parentUid = test.parentUid
 
-        while (parentUid !== null) {
-            const parent: WDIOReporterSuite = this.suites.find((suite: WDIOReporterSuite) => suite.uid === parentUid)
+        const suites: WDIOReporterSuite[] = this.suites.filter((suite: WDIOReporterSuite) => suite.cid === test.cid)
 
-            if (parent) {
-                parents.push(parent.uid)
-                path.push(parent.title)
-                parentUid = parent.parentUid
-            } else {
-                parentUid = null
-            }
+        let parent: WDIOReporterSuite = suites.find((suite: WDIOReporterSuite) => suite.uid === test.parentUid)
 
-            // To prevent infinite loop
-            if (parents.indexOf(parentUid) !== -1) {
-                parentUid = null
+        if (parent) {
+            path.push(parent.title)
+
+            while (parent.title !== parent.parent) {
+                parent = suites.find((suite: WDIOReporterSuite) => suite.title === parent.parent)
+
+                if (parent) {
+                    parents.push(parent.uid)
+                    path.push(parent.title)
+                }
             }
         }
 
-        return path.reverse().join(" \u203A ")
+        return path.slice().reverse().join(" \u203A ")
     }
 
     private onTestResult = (test: WDIOReporterTest) => {
