@@ -43,7 +43,7 @@ interface Results {
 
 class TapReporter extends EventEmitter {
 
-    public static out (chunk: string): void {
+    public static out(chunk: string): void {
         process.stdout.write(chunk)
         process.stdout.write(EOL)
     }
@@ -54,7 +54,7 @@ class TapReporter extends EventEmitter {
     protected suites: WDIOReporterSuite[] = []
     protected results: Results
 
-    constructor (baseReporter: any, config: any, options?: any) {
+    constructor(baseReporter: any, config: any, options?: any) {
         super()
 
         this.baseReporter = baseReporter
@@ -102,7 +102,7 @@ class TapReporter extends EventEmitter {
         })
     }
 
-    protected getTestPath (test: WDIOReporterTest): string {
+    protected getTestPath(test: WDIOReporterTest): string {
         if (test.uid === test.parentUid) {
             return test.title
         }

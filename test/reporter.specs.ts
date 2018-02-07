@@ -1,13 +1,13 @@
 import * as process from "process"
 import { EOL } from "os"
-import { test, ContextualTestContext } from "ava"
+import { test, TestContext, Context } from "ava"
 import TapReporter = require("../src/reporter")
 
-interface ReporterTestContext extends ContextualTestContext {
-    context: {
-        reporter?: TapReporter
-    }
+interface ReporterContext {
+    reporter?: TapReporter
 }
+
+type ReporterTestContext = TestContext & Context<ReporterContext>
 
 const baseReporter: any = {
     stats : {
@@ -76,7 +76,7 @@ test.beforeEach((t: ReporterTestContext) => {
     StdoutStub.stub()
 })
 
-test.always.afterEach(() => {
+test.afterEach.always(() => {
     StdoutStub.restore()
 })
 
